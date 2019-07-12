@@ -10,29 +10,21 @@ namespace PrivateGist.Models
     {
         private readonly IFileInfo _file;
 
-        public InMemoryFileProvider(MemoryFileInfo fileInfo)
-        {
-            _file = fileInfo;
-        }
+        public InMemoryFileProvider(MemoryFileInfo fileInfo) => _file = fileInfo;
 
-        public IDirectoryContents GetDirectoryContents(string subpath)
-        {
-            throw new NotImplementedException();
-        }
+#pragma warning disable RCS1079 // Throwing of new NotImplementedException.
+        public IDirectoryContents GetDirectoryContents(string subpath) => throw new NotImplementedException();
+#pragma warning restore RCS1079 // Throwing of new NotImplementedException.
 
-        public IFileInfo GetFileInfo(string subpath)
-        {
-            return _file;
-        }
+        public IFileInfo GetFileInfo(string subpath) => _file;
 
-        public IChangeToken Watch(string filter)
-        {
-            throw new NotImplementedException();
-        }
+#pragma warning disable RCS1079 // Throwing of new NotImplementedException.
+        public IChangeToken Watch(string filter) => throw new NotImplementedException();
+#pragma warning restore RCS1079 // Throwing of new NotImplementedException.
 
         public class MemoryFileInfo : IFileInfo
         {
-            readonly byte[] _content;
+            private readonly byte[] _content;
 
             public MemoryFileInfo(string filename, string data)
             {
@@ -60,10 +52,7 @@ namespace PrivateGist.Models
 
             public bool IsDirectory => false;
 
-            public Stream CreateReadStream()
-            {
-                return new MemoryStream(_content);
-            }
+            public Stream CreateReadStream() => new MemoryStream(_content);
         }
     }
 }

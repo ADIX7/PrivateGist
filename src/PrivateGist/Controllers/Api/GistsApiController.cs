@@ -1,18 +1,12 @@
-using System.Buffers;
-using System.Text;
-using System.IO;
 using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using PrivateGist.Models;
-using PrivateGist.Models.Git;
-using System.Text.Json;
-using PrivateGist.Services;
-using PrivateGist.Extensions;
+using System.Text;
 using LibGit2Sharp;
+using Microsoft.AspNetCore.Mvc;
+using PrivateGist.Extensions;
+using PrivateGist.Models;
+using PrivateGist.Services;
 
 namespace PrivateGist.Controllers.Api
 {
@@ -20,21 +14,17 @@ namespace PrivateGist.Controllers.Api
     [ApiController]
     public class GistsApiController : ControllerBase
     {
-        private readonly IGlobalSettings _settings;
         private readonly IRepositoryService _repositoryService;
-        public GistsApiController(IGlobalSettings settings, IRepositoryService repositoryService = null)
-        {
-            _settings = settings;
-            _repositoryService = repositoryService;
-        }
+
+        public GistsApiController(IRepositoryService repositoryService = null) => _repositoryService = repositoryService;
 
         [HttpPatch("{repoId}")]
-        public async Task UploadGist(string repoId, [FromBody] RepositoryPatch data)
+        public void UploadGist(string repoId, [FromBody] RepositoryPatch data)
         {
             var repo = _repositoryService.GetRepositoryById(repoId);
             var mainBranch = repo.Branches.GetMainBranch();
 
-            TreeDefinition td = new TreeDefinition();
+            var td = new TreeDefinition();
 
             foreach (var previousElement in mainBranch.Tip.Tree)
             {
@@ -56,20 +46,21 @@ namespace PrivateGist.Controllers.Api
 
                     td.Add(newFile.Key, newBlob, Mode.NonExecutableFile);
                 }
-                //TODO else: file moved
+
+                // TODO else: file moved
             }
 
             var tree = repo.ObjectDatabase.CreateTree(td);
 
             // Committer and author
-            Signature committer = new Signature("James", "@jugglingnutcase", DateTime.Now);
-            Signature author = committer;
+            var committer = new Signature("James", "@jugglingnutcase", DateTime.Now);
+            var author = committer;
 
             // Create binary stream from the text
-            Commit commit = repo.ObjectDatabase.CreateCommit(
+            var commit = repo.ObjectDatabase.CreateCommit(
                 author,
                 committer,
-                "",
+                string.Empty,
                 tree,
                 new[] { mainBranch.Commits.First() },
                 false);

@@ -1,14 +1,11 @@
-﻿using System.IO;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PrivateGist.Extensions;
 using PrivateGist.Models;
 using PrivateGist.Models.Git;
 using PrivateGist.Services;
-using PrivateGist.Extensions;
 
 namespace PrivateGist.Controllers.Api
 {
@@ -31,10 +28,11 @@ namespace PrivateGist.Controllers.Api
             var page = HttpContext.Request.Query["page"];
             try
             {
-                var pagei = int.Parse(page);
-                if (pagei > 1) return new List<Repository>();
+                var pageIndex = int.Parse(page);
+                if (pageIndex > 1) return new List<Repository>();
             }
             catch { }
+
             //var token = HttpContext.Request.Headers["Authorization"];
 
             var repoIds = _repositoryService.GetUserRepositories(username);
@@ -42,30 +40,28 @@ namespace PrivateGist.Controllers.Api
 
             foreach (var repoId in repoIds)
             {
-                using (var gitRepo = _repositoryService.GetRepositoryById(repoId))
+                using var gitRepo = _repositoryService.GetRepositoryById(repoId);
+                var files = new Dictionary<string, File>();
+                var repo = new Repository(_settings, repoId)
                 {
-                    var files = new Dictionary<string, Models.Git.File>();
-                    var repo = new Repository(_settings, repoId)
-                    {
-                        Files = files
-                    };
+                    Files = files
+                };
 
-                    var branches = gitRepo.Branches;
-                    if (branches.Any())
-                    {
-                        var mainBranch = branches.GetMainBranch();
+                var branches = gitRepo.Branches;
+                if (branches.Any())
+                {
+                    var mainBranch = branches.GetMainBranch();
 
-                        foreach (var entry in mainBranch.Tip.Tree)
+                    foreach (var entry in mainBranch.Tip.Tree)
+                    {
+                        files.Add(entry.Name, new File(repo, entry.Name, entry.Target.Id.Sha)
                         {
-                            files.Add(entry.Name, new Models.Git.File(_settings, repo, entry.Name, entry.Target.Id.Sha)
-                            {
-                                Type = "text/plain"
-                            });
-                        }
+                            Type = "text/plain"
+                        });
                     }
-
-                    repos.Add(repo);
                 }
+
+                repos.Add(repo);
             }
 
             /* var userRepo = new DirectoryInfo(Path.Combine(_settings.RepoPath, username));

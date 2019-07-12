@@ -6,7 +6,10 @@ namespace PrivateGist.Models.Git
 {
     public class Repository
     {
-        public Repository() { }
+        public Repository()
+        {
+        }
+
         public Repository(IGlobalSettings settings, string id)
         {
             Id = id;
@@ -21,7 +24,7 @@ namespace PrivateGist.Models.Git
 
             Html_Url = settings.RootWebUrl + Id;
 
-            Description = Id; //TODO change
+            Description = Id; // TODO change
             Created_At = DateTime.Now;
             Updated_At = DateTime.Now;
         }
@@ -40,6 +43,7 @@ namespace PrivateGist.Models.Git
 
         [JsonPropertyName("html_url")]
         public string Html_Url { get; set; }
+
         public Dictionary<string, File> Files { get; set; }
         public bool Public { get; set; }
 
@@ -48,6 +52,7 @@ namespace PrivateGist.Models.Git
 
         [JsonPropertyName("updated_at")]
         public DateTime Updated_At { get; set; }
+
         public string Description { get; set; }
         public int Comments { get; set; }
         public string User { get; set; }
