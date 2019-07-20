@@ -1,0 +1,9 @@
+@import "../../../node_modules/bootstrap/scss/bootstrap";
+
+html, body, body > div {
+    height: 100%;
+}
+
+body #mainContent {
+    height: calc(100% - 56px);
+}

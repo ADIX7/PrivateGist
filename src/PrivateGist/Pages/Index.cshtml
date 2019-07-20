@@ -1,10 +1,15 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "PrivateGist";
 }
-
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div id="_antiForgeryHolder" style="display: none">
+    @Html.AntiForgeryToken()
 </div>
+<app id="app"></app>
+
+<script type="text/javascript" src="/app/js/bundle.js"></script>
+
+@section Header {
+    <link rel="stylesheet" href="/app/css/main.css">
+}

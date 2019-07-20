@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using PrivateGist.Hubs;
 using PrivateGist.Middleware;
 using PrivateGist.Models;
 using PrivateGist.Services;
@@ -30,6 +31,8 @@ namespace PrivateGist
             });
 
             services.AddMvc(option => option.EnableEndpointRouting = false);
+
+            services.AddSignalR();
 
             services.AddSingleton<IGlobalSettings, GlobalSettings>();
             services.AddSingleton<IRepositoryService, RepositoryService>();
@@ -61,6 +64,8 @@ namespace PrivateGist
             app.UseAuthorization();
 
             app.UseMvc();
+
+            app.UseEndpoints(endpoints => endpoints.MapHub<ApiHub>("/apiHub"));
 
             /* app.UseEndpoints(endpoints =>
             {

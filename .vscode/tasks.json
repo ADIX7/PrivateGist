@@ -31,6 +31,16 @@
                 "${workspaceFolder}/src/PrivateGist/PrivateGist.csproj"
             ],
             "problemMatcher": "$tsc"
+        },
+        {
+            "label": "Generate SignalRHandlers",
+            "command": "dotnet-script",
+            "type": "process",
+            "args": [
+                "${workspaceFolder}/src/PrivateGist/websrc/app/SignalRHandlers.csx",
+                "--no-cache"
+            ],
+            "problemMatcher": []
         }
     ]
 }
